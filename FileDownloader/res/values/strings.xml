@@ -3,6 +3,8 @@
 
     <string name="app_name">FileDownloader</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="picture_downloader">Picture Downloader</string>
+     <string name="status_download">Status: Idle</string>
+     <string name="status_button">Download</string>
 
 </resources>
