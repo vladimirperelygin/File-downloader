@@ -8,20 +8,20 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
+import android.content.ContextWrapper;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 	private Button startBtn;
-	private ProgressDialog mProgressDialog;
-	private FileOutputStream output;
+	private FileOutputStream output; // for internal storage
+	ProgressBar progressBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		startBtn = (Button) findViewById(R.id.startBtn);
+		progressBar = (ProgressBar) findViewById(R.id.progressBar);
 		startBtn.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				startDownload();
@@ -38,24 +39,9 @@ public class MainActivity extends Activity {
 	}
 
 	private void startDownload() {
-		String url = "http://www.tower-contracting.com/images/city.jpg";
+		String url = "http://www.walls-world.ru/wallpapers/3d/wallpapers_19924_1600x1200.jpg";
 		new DownloadFileAsync().execute(url);
 
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case DIALOG_DOWNLOAD_PROGRESS:
-			mProgressDialog = new ProgressDialog(this);
-			mProgressDialog.setMessage("Downloading file..");
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			mProgressDialog.setCancelable(false);
-			mProgressDialog.show();
-			return mProgressDialog;
-		default:
-			return null;
-		}
 	}
 
 	class DownloadFileAsync extends AsyncTask<String, String, String> {
@@ -63,7 +49,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			showDialog(DIALOG_DOWNLOAD_PROGRESS);
+
 		}
 
 		@Override
@@ -78,11 +64,14 @@ public class MainActivity extends Activity {
 
 				int lenghtOfFile = conexion.getContentLength();
 				Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
-
+				ContextWrapper cw = new ContextWrapper(getApplicationContext());// for
+																				// internal
+																				// storage
 				InputStream input = new BufferedInputStream(url.openStream());
-				OutputStream output = new FileOutputStream("/sdcard/vasya.jpg");
-				// output = openFileOutput("ololo",
-				// Context.MODE_PRIVATE);
+
+				// output = openFileOutput("ks.jpg", Context.MODE_PRIVATE);
+				// //for internal storage
+				OutputStream output = new FileOutputStream("/sdcard/111q.jpg");
 				byte data[] = new byte[1024];
 
 				long total = 0;
@@ -104,12 +93,13 @@ public class MainActivity extends Activity {
 
 		protected void onProgressUpdate(String... progress) {
 			Log.d("ANDRO_ASYNC", progress[0]);
-			mProgressDialog.setProgress(Integer.parseInt(progress[0]));
+			progressBar.setProgress(Integer.parseInt(progress[0]));
 		}
 
 		@Override
 		protected void onPostExecute(String unused) {
-			dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+
+			progressBar.setProgress(100);
 		}
 	}
 }
